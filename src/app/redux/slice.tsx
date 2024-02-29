@@ -39,7 +39,9 @@ const initialState: TaskState = {
 const taskSlice = createSlice({
   name: 'tasks',
   initialState,
-  reducers: {},
+  reducers: {
+    
+  },
   extraReducers: (builder) => {
       builder.addCase(fetchTasks.fulfilled, (state, action) => {
         state.tasks = action.payload;

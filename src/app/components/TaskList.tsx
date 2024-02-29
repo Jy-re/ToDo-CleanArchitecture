@@ -10,7 +10,7 @@ const TaskList: React.FC = () => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchTasks());
+    dispatch(fetchTasks() as any);
   }, [dispatch]);
 
   console.log("Tasks:", tasks);
@@ -23,13 +23,13 @@ const TaskList: React.FC = () => {
         isComplete: false,
         isEditing: false,
       };
-      dispatch(addTask(newTask));
+      dispatch(addTask(newTask) as any);
       setNewTaskText(''); 
     }
   };
 
   const handleDeleteTask = (taskId: string) => {
-    dispatch(deleteTask(taskId));
+    dispatch(deleteTask(taskId) as any);
   };
 
   return (
