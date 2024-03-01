@@ -44,9 +44,9 @@ const TaskList: React.FC = () => {
 
   return (
     <div>
-      <h2>Tasks</h2>
+      <h2>Emails</h2>
       
-      <p>Delete task to mark as complete</p>
+      <p>Add emails you need to remember</p>
       <div>
         <input
           type="text"
@@ -54,7 +54,7 @@ const TaskList: React.FC = () => {
           value={newTaskText}
           onChange={(e) => setNewTaskText(e.target.value)}
         />
-        <button onClick={handleAddTask}>Add Task</button>
+        <button onClick={handleAddTask}>Add Email</button>
       </div>
       {errorMessage && <p style={{color: "red"}}>{errorMessage}</p>}
       <ul>
