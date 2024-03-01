@@ -15,15 +15,10 @@ class TaskRepositoryImpl implements TaskRepository {
     }
 
     async addTask(newTask: Task): Promise<Task> {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (emailRegex.test(newTask.name)) { 
             const tasks = await this.getTasks();
             tasks.push(newTask);
             await this.saveAllTasks(tasks);
             return newTask;
-        } else {
-            return Promise.reject(new Error('Invalid email format'));
-        }
     }
 
     async removeTask(task: Task): Promise<Task> {

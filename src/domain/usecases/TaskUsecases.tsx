@@ -19,7 +19,12 @@ export class TaskServiceImpl implements TaskService {
     }
 
     async addTask(task: Task): Promise<void> {
-        await this.TaskRepo.addTask(task); 
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(task.name)) { 
+            await this.TaskRepo.addTask(task);
+        } else {
+            throw new Error('Invalid email format');
+        }
     }
 
     async removeTask(task: Task): Promise<void> {
