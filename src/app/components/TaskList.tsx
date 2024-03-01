@@ -6,6 +6,7 @@ import { Task } from '../../domain/entities/Task';
 
 const TaskList: React.FC = () => {
   const [newTaskText, setNewTaskText] = useState<string>('');
+  const [errorMessage, setErrorMessage] = useState<string>('');
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const dispatch = useDispatch();
 
@@ -13,9 +14,9 @@ const TaskList: React.FC = () => {
     dispatch(fetchTasks() as any);
   }, [dispatch]);
 
-  useEffect(()=>{
-    console.log(tasks)
-  },[tasks])
+  useEffect(() => {
+    console.log(tasks);
+  }, [tasks]);
 
   const handleAddTask = () => {
     if (newTaskText.trim() !== '') {
@@ -24,18 +25,27 @@ const TaskList: React.FC = () => {
         name: newTaskText,
       };
 
-      dispatch(addTask({ task: newTask }) as any);
-      setNewTaskText('');
+      dispatch(addTask({ task: newTask }) as any)
+        .unwrap()
+        .then(() => {
+          setErrorMessage(''); 
+          dispatch(fetchTasks() as any);
+          setNewTaskText('');
+        })
+        .catch((error: Error) => {
+          setErrorMessage(error.message);
+        });
     }
   };
 
   const handleDeleteTask = (task: Task) => {
-    dispatch(deleteTask({task}) as any);
+    dispatch(deleteTask({ task }) as any);
   };
 
   return (
     <div>
       <h2>Tasks</h2>
+      
       <p>Delete task to mark as complete</p>
       <div>
         <input
@@ -46,6 +56,7 @@ const TaskList: React.FC = () => {
         />
         <button onClick={handleAddTask}>Add Task</button>
       </div>
+      {errorMessage && <p style={{color: "red"}}>{errorMessage}</p>}
       <ul>
         {tasks.map((task) => (
           <li key={task.id}>

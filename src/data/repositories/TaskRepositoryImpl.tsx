@@ -9,22 +9,26 @@ class TaskRepositoryImpl implements TaskRepository {
     }
 
     async getTasks(): Promise<Task[]> {
-
+        localStorage.clear
         const storedTasks = await JSON.parse(localStorage.getItem(this.storageKey) || '[]');
         return storedTasks;
     }
 
     async addTask(newTask: Task): Promise<Task> {
-        const tasks = await this.getTasks();
-        tasks.push(newTask);
-        await this.saveAllTasks(tasks);
-        
-        return newTask;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (emailRegex.test(newTask.name)) { 
+            const tasks = await this.getTasks();
+            tasks.push(newTask);
+            await this.saveAllTasks(tasks);
+            return newTask;
+        } else {
+            return Promise.reject(new Error('Invalid email format'));
+        }
     }
 
     async removeTask(task: Task): Promise<Task> {
         let tasks = await this.getTasks();
-        tasks = tasks.filter(task => task.id !== task.id);
+        tasks = tasks.filter(t => t.id === task.id);
         await this.saveAllTasks(tasks);
         return task;
     }
