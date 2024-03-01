@@ -5,5 +5,5 @@ export interface TaskRepository {
     //same gyapon sa uban, nag ingon dari nga once ma trigger ni na methods, si Task entity ilang maapektuhan
     getTasks(): Promise<Task[]>;
     addTask(task: Task): Promise<Task>;
-    removeTask(taskId: string): Promise<boolean>;
+    removeTask(task: Task): Promise<Task>;
 }

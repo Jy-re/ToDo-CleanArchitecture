@@ -1,58 +1,66 @@
-// src/redux/slice.ts
+
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { Task } from '../../domain/entities/Task';
 import TaskRepositoryImpl from '../../data/repositories/TaskRepositoryImpl';
+import { TaskServiceImpl } from '../../domain/usecases/TaskUsecases';
 
-const taskRepository = new TaskRepositoryImpl();
-
-//mao ning actions, dapat pa ni nako e separate sa slicee
-
+// Define async thunks
 export const fetchTasks = createAsyncThunk('tasks/fetchTasks', async () => {
-    return await taskRepository.getTasks();
-  }
-);
+    const taskDataRepos = new TaskRepositoryImpl();
+    const taskService = new TaskServiceImpl(taskDataRepos);
+    const tasks = await taskService.getTask();
+    console.log('Fetched items:', tasks);
+    return tasks;
+    
+});
 
 export const addTask = createAsyncThunk(
-  'tasks/addTask',
-  async (newTask: Task) => { 
-    return await taskRepository.addTask(newTask);
-  }
+    'tasks/addTask',
+    async ({ task }: { task: Task }) => { 
+        const taskDataRepos = new TaskRepositoryImpl();
+        const taskService = new TaskServiceImpl(taskDataRepos);
+        await taskService.addTask(task);
+        console.log("Added:", task)
+        return task;
+    }
 );
 
 export const deleteTask = createAsyncThunk(
   'tasks/deleteTask',
-  async (taskId: string) => { 
-    await taskRepository.removeTask((taskId));
+  async ({ task }: { task: Task }) => { 
+    const taskDataRepos = new TaskRepositoryImpl();
+    const taskService = new TaskServiceImpl(taskDataRepos);
+    await taskService.removeTask(task);
+    return task; // Return the taskId directly
   }
 );
 
-// create sliceee
 
 interface TaskState {
-  tasks: Task[];
+    tasks: Task[];
 }
 
 const initialState: TaskState = {
-  tasks: [],
+    tasks: [],
 };
 
+
 const taskSlice = createSlice({
-  name: 'tasks',
-  initialState,
-  reducers: {
-    
-  },
-  extraReducers: (builder) => {
-      builder.addCase(fetchTasks.fulfilled, (state, action) => {
-        state.tasks = action.payload;
-      })
-      builder.addCase(addTask.fulfilled, (state, action) => {
-        state.tasks.push(action.payload);
-      })
-      builder.addCase(deleteTask.fulfilled, (state, action) => {
-        state.tasks = state.tasks.filter(task => task.id !== action.meta.arg);
-      })
-  },
+    name: 'tasks',
+    initialState,
+    reducers: {},
+    extraReducers: (builder) => {
+        builder.addCase(fetchTasks.fulfilled, (state, action) => ({
+            ...state,
+            tasks: action.payload, 
+        }))
+        builder.addCase(fetchTasks.pending, (state) => ({
+            ...state,
+        }))
+        builder.addCase(fetchTasks.rejected, (state) => ({
+            ...state,
+        }))
+    },
 });
 
 export default taskSlice.reducer;

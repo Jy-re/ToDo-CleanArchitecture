@@ -5,7 +5,7 @@ import { fetchTasks, addTask, deleteTask } from '../redux/slice';
 import { Task } from '../../domain/entities/Task';
 
 const TaskList: React.FC = () => {
-  const [newTaskText, setNewTaskText] = useState<string>(''); 
+  const [newTaskText, setNewTaskText] = useState<string>('');
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const dispatch = useDispatch();
 
@@ -13,23 +13,24 @@ const TaskList: React.FC = () => {
     dispatch(fetchTasks() as any);
   }, [dispatch]);
 
-  console.log("Tasks:", tasks);
+  useEffect(()=>{
+    console.log(tasks)
+  },[tasks])
 
   const handleAddTask = () => {
     if (newTaskText.trim() !== '') {
       const newTask: Task = {
-        id: (tasks.length + 1).toString(), 
+        id: tasks.length + 1,
         name: newTaskText,
-        isComplete: false,
-        isEditing: false,
       };
-      dispatch(addTask(newTask) as any);
-      setNewTaskText(''); 
+
+      dispatch(addTask({ task: newTask }) as any);
+      setNewTaskText('');
     }
   };
 
-  const handleDeleteTask = (taskId: string) => {
-    dispatch(deleteTask(taskId) as any);
+  const handleDeleteTask = (task: Task) => {
+    dispatch(deleteTask({task}) as any);
   };
 
   return (
@@ -46,10 +47,10 @@ const TaskList: React.FC = () => {
         <button onClick={handleAddTask}>Add Task</button>
       </div>
       <ul>
-        {tasks.map(task => (
+        {tasks.map((task) => (
           <li key={task.id}>
             {task.name}
-            <button onClick={() => handleDeleteTask(task.id)}>Delete</button>
+            <button onClick={() => handleDeleteTask(task)}>Delete</button>
           </li>
         ))}
       </ul>
