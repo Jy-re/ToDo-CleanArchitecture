@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
 import { configureStore } from '@reduxjs/toolkit' 
 import { Provider } from 'react-redux'
-import taskReducer from './app/redux/slice'
+import taskReducer from './app/redux/todo.slice'
 
 
 export const store = configureStore({

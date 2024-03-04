@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../main';
-import { fetchTasks, addTask, deleteTask } from '../redux/slice';
+import { fetchTasks, addTask, deleteTask } from '../redux/todo.action';
 import { Task } from '../../domain/entities/Task';
+import UpdateForm from './UpdateForm';
 
 const TaskList: React.FC = () => {
   const [newTaskText, setNewTaskText] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [editTask, setEditTask] = useState<Task | null>(null); 
   const tasks = useSelector((state: RootState) => state.tasks.tasks);
   const dispatch = useDispatch();
 
@@ -21,7 +23,7 @@ const TaskList: React.FC = () => {
   const handleAddTask = () => {
     if (newTaskText.trim() !== '') {
       const newTask: Task = {
-        id: tasks.length + 1,
+        id: "",
         name: newTaskText,
       };
 
@@ -40,6 +42,14 @@ const TaskList: React.FC = () => {
 
   const handleDeleteTask = (task: Task) => {
     dispatch(deleteTask({ task }) as any);
+  };
+
+  const handleEditTask = (task: Task) => {
+    setEditTask(task); 
+  };
+
+  const handleCloseForm = () => {
+    setEditTask(null);
   };
 
   return (
@@ -62,6 +72,8 @@ const TaskList: React.FC = () => {
           <li key={task.id}>
             {task.name}
             <button onClick={() => handleDeleteTask(task)}>Delete</button>
+            <button onClick={() => handleEditTask(task)}>Edit</button> 
+            {editTask && editTask.id === task.id && <UpdateForm task={task} onClose={handleCloseForm}/>}
           </li>
         ))}
       </ul>

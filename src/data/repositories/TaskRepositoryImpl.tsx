@@ -21,11 +21,23 @@ class TaskRepositoryImpl implements TaskRepository {
             return newTask;
     }
 
-    async removeTask(task: Task): Promise<Task> {
+    async removeTask(task: Task): Promise<void> {
         let tasks = await this.getTasks();
         tasks = tasks.filter(t => t.id === task.id);
         await this.saveAllTasks(tasks);
-        return task;
+        
+    }
+
+    async updateTask(updatedTask: Task): Promise<Task> {
+        let tasks = await this.getTasks();
+        tasks = tasks.map(task => {
+            if (task.id === updatedTask.id) {
+                return updatedTask;
+            }
+            return task;
+        });
+        await this.saveAllTasks(tasks);
+        return updatedTask;
     }
 
     private async saveAllTasks(tasks: Task[]): Promise<void> {
